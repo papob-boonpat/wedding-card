@@ -123,12 +123,22 @@ export default function InvitationScene() {
             <p className="text-xs uppercase tracking-[0.3em] text-accent">
               {t("tapOrSwipe")}
             </p>
-            <Link
-              href="/rsvp"
-              className="pointer-events-auto rounded-full bg-accent px-9 py-3.5 text-base font-medium tracking-wide text-white shadow-lg transition hover:brightness-110"
-            >
-              {t("rsvp")}
-            </Link>
+            <div className="flex gap-3">
+              <Link
+                href="/rsvp"
+                className="pointer-events-auto rounded-full bg-accent px-9 py-3.5 text-base font-medium tracking-wide text-white shadow-lg transition hover:brightness-110"
+              >
+                {t("rsvp")}
+              </Link>
+              <a
+                href="https://maps.app.goo.gl/KVVUaA1X7Y77XMs86"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="pointer-events-auto rounded-full bg-accent/80 px-9 py-3.5 text-base font-medium tracking-wide text-white shadow-lg transition hover:brightness-110"
+              >
+                {t("location")}
+              </a>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
