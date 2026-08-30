@@ -1,94 +1,128 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Envelope from "./Envelope";
 import Card from "./Card";
 import { useI18n } from "./LangProvider";
 
-type Phase = "sealed" | "opening" | "card-out";
+type Phase = "sealed" | "opening" | "leaving" | "grow" | "card-out";
+
+// Sequence timing (ms) — tune to taste. The steps run one after another:
+const FLAP_MS = 600; // 1. flap swings open (matches Envelope's flap duration)
+const HOLD_MS = 250; // 2. brief pause with the flap open
+const LEAVE_MS = 800; // 3. envelope slides down and fades away
+const GROW_MS = 650; // 4. the (now revealed) card grows to fill the screen
+
+// While tucked, the card is this fraction of the envelope's *height* so it
+// always fits inside, whatever the envelope's aspect ratio.
+const TUCK_RATIO = 0.82;
 
 export default function InvitationScene() {
   const [phase, setPhase] = useState<Phase>("sealed");
   const [flipped, setFlipped] = useState(false);
+  const [tuckScale, setTuckScale] = useState(0.4);
   const reduce = useReducedMotion();
   const { t } = useI18n();
-  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
-
   const openedRef = useRef(false);
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const list = timers.current;
+    return () => list.forEach(clearTimeout);
+  }, []);
+
+  // The card's size and the envelope's size are both viewport-relative, so
+  // measure them to get the scale that makes the tucked card fit inside.
+  useEffect(() => {
+    const measure = () => {
+      const stage = stageRef.current?.offsetHeight;
+      const card = cardRef.current?.offsetHeight; // ignores the CSS transform
+      if (stage && card) setTuckScale((stage * TUCK_RATIO) / card);
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
+
   const open = useCallback(() => {
     if (openedRef.current) return;
     openedRef.current = true;
-    setPhase("opening");
+
     if (reduce) {
       setPhase("card-out");
       return;
     }
-    timers.current.push(setTimeout(() => setPhase("card-out"), 500));
+
+    setPhase("opening");
+    const t1 = FLAP_MS + HOLD_MS;
+    const t2 = t1 + LEAVE_MS;
+    const t3 = t2 + GROW_MS;
+    timers.current.push(
+      setTimeout(() => setPhase("leaving"), t1),
+      setTimeout(() => setPhase("grow"), t2),
+      setTimeout(() => setPhase("card-out"), t3),
+    );
   }, [reduce]);
 
+  const opened = phase !== "sealed";
+  const leaving = phase === "leaving" || phase === "grow" || phase === "card-out";
+  const grown = phase === "grow" || phase === "card-out";
   const cardOut = phase === "card-out";
 
   return (
     <main className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden">
-      <div className="relative flex items-center justify-center">
-        {phase !== "card-out" && (
-          <Envelope open={phase === "opening"} gone={false} onOpen={open} />
-        )}
+      <div
+        ref={stageRef}
+        className="relative"
+        style={{ width: "min(86vw, 380px)", aspectRatio: "1.5", perspective: 1200 }}
+      >
+        <Envelope part="back" leaving={leaving} />
 
-        {/* Card: only exists once the envelope is opening — while sealed it is
-            not in the DOM at all, so it can never intercept the open tap. */}
-        {phase !== "sealed" && (
-          <motion.div
-            className="absolute left-1/2 top-1/2"
-            style={{
-              x: "-50%",
-              zIndex: 15,
-              pointerEvents: cardOut ? "auto" : "none",
-            }}
-            initial={
-              reduce
-                ? { y: "-50%", scale: 1, opacity: 0 }
-                : { y: "-38%", scale: 0.18, opacity: 0 }
-            }
-            animate={
-              reduce
-                ? { y: "-50%", scale: 1, opacity: 1 }
-                : { y: "-50%", scale: 1, opacity: 1 }
-            }
-            transition={
-              reduce
-                ? { duration: 0 }
-                : phase === "opening"
-                  ? {
-                    delay: 0.15,
-                    duration: 0.6,
-                    ease: [0.16, 1, 0.3, 1],
-                  }
-                  : { duration: 0.4 }
-            }
-          >
-            <Card
-              flipped={flipped}
-              onFlip={() => cardOut && setFlipped((f) => !f)}
-              interactive={cardOut}
-            />
-          </motion.div>
-        )}
+        {/* Card — dead centre the whole time. Hidden until the envelope opens,
+            then only its scale changes (after the envelope has left). */}
+        <motion.div
+          ref={cardRef}
+          className="absolute left-1/2 top-1/2"
+          style={{
+            x: "-50%",
+            y: "-50%",
+            zIndex: 10,
+            opacity: opened ? 1 : 0,
+            pointerEvents: cardOut ? "auto" : "none",
+          }}
+          initial={false}
+          animate={{ scale: reduce || grown ? 1 : tuckScale }}
+          transition={
+            reduce
+              ? { duration: 0 }
+              : { duration: GROW_MS / 1000, ease: [0.22, 1, 0.36, 1] }
+          }
+        >
+          <Card
+            flipped={flipped}
+            onFlip={() => cardOut && setFlipped((f) => !f)}
+            interactive={cardOut}
+          />
+        </motion.div>
+
+        <Envelope part="front" leaving={leaving} open={opened} onOpen={open} />
       </div>
 
       <AnimatePresence>
-        {cardOut && (
+        {grown && (
           <motion.div
-            className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex flex-col items-center gap-2 px-4 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-10 text-center"
+            className="pointer-events-none absolute inset-x-0 bottom-0 z-40 flex flex-col items-center gap-2 px-4 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-10 text-center"
             style={{
               background:
                 "linear-gradient(to top, rgba(244,237,228,0.9) 20%, transparent)",
             }}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
           >
             <p className="text-xs uppercase tracking-[0.3em] text-accent">
               {t("tapOrSwipe")}
