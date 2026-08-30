@@ -35,7 +35,7 @@ export default function Envelope({ part, leaving, open = false, onOpen }: Props)
     return (
       <motion.div
         className="absolute inset-0 rounded-lg shadow-xl"
-        style={{ background: PAPER, zIndex: 0 }}
+        style={{ background: PAPER, zIndex: 0, pointerEvents: leaving ? "none" : "auto" }}
         animate={leaving ? LEAVE : HOME}
         transition={leaveTransition}
       />
@@ -45,7 +45,7 @@ export default function Envelope({ part, leaving, open = false, onOpen }: Props)
   return (
     <motion.div
       className="absolute inset-0"
-      style={{ zIndex: 20, transformStyle: "preserve-3d" }}
+      style={{ zIndex: 20, transformStyle: "preserve-3d", pointerEvents: leaving ? "none" : "auto" }}
       animate={leaving ? LEAVE : HOME}
       transition={leaveTransition}
     >

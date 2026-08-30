@@ -115,11 +115,7 @@ export default function InvitationScene() {
       <AnimatePresence>
         {grown && (
           <motion.div
-            className="pointer-events-none absolute inset-x-0 bottom-0 z-40 flex flex-col items-center gap-2 px-4 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-10 text-center"
-            style={{
-              background:
-                "linear-gradient(to top, rgba(244,237,228,0.9) 20%, transparent)",
-            }}
+            className="fixed inset-x-0 bottom-0 z-40 flex flex-col items-center gap-2 px-4 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-[calc(90svh+3rem)] text-center pointer-events-none"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.2 }}
