@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "You're Invited",
     description: "A wedding invitation — open the envelope and RSVP.",
-    images: ["/card-front.jpg"],
+    images: ["/FC.png"],
   },
 };
 

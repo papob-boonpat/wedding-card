@@ -115,15 +115,19 @@ export default function InvitationScene() {
       <AnimatePresence>
         {grown && (
           <motion.div
-            className="fixed inset-x-0 bottom-0 z-40 flex flex-col items-center gap-2 px-4 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-[calc(90svh+3rem)] text-center pointer-events-none"
+            className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex flex-col items-center gap-3 px-4 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] pt-28 text-center"
+            style={{
+              background:
+                "linear-gradient(to top, rgba(244,237,228,0.92) 0%, rgba(244,237,228,0.55) 45%, transparent 100%)",
+            }}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.2 }}
           >
-            <p className="text-xs uppercase tracking-[0.3em] text-accent">
+            <p className="text-xs uppercase tracking-[0.3em] text-accent drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)]">
               {t("tapOrSwipe")}
             </p>
-            <div className="flex gap-3">
+            <div className="flex flex-wrap justify-center gap-3">
               <Link
                 href="/rsvp"
                 className="pointer-events-auto rounded-full bg-accent px-9 py-3.5 text-base font-medium tracking-wide text-white shadow-lg transition hover:brightness-110"
@@ -134,7 +138,7 @@ export default function InvitationScene() {
                 href="https://maps.app.goo.gl/KVVUaA1X7Y77XMs86"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="pointer-events-auto rounded-full bg-accent/80 px-9 py-3.5 text-base font-medium tracking-wide text-white shadow-lg transition hover:brightness-110"
+                className="pointer-events-auto rounded-full border border-accent bg-background px-9 py-3.5 text-base font-medium tracking-wide text-accent shadow-lg transition hover:brightness-95"
               >
                 {t("location")}
               </a>

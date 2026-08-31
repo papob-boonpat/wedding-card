@@ -5,11 +5,11 @@ import { motion, useReducedMotion, type PanInfo } from "framer-motion";
 import { useI18n } from "./LangProvider";
 
 // Match this to the real aspect ratio of your card images (width / height).
-const CARD_ASPECT = 0.707; // A-series portrait (e.g. 1414 x 2000)
+const CARD_ASPECT = 0.7142857143; // A-series portrait (e.g. 1414 x 2000)
 
-// As large as possible while keeping the aspect ratio and a small margin.
-// Uses svh so mobile browser chrome never clips it.
-const CARD_WIDTH = `min(96vw, calc(90svh * ${CARD_ASPECT}))`;
+// Sized to leave room for the button bar below. Uses svh so mobile browser
+// chrome never clips it.
+const CARD_WIDTH = `min(88vw, calc(76svh * ${CARD_ASPECT}))`;
 
 type Props = {
   flipped: boolean;
@@ -67,8 +67,8 @@ export default function Card({ flipped, onFlip, interactive }: Props) {
           }
         }}
       >
-        <Face src="/card-front.jpg" alt={t("cardFront")} />
-        <Face src="/card-back.jpg" alt={t("cardBack")} back />
+        <Face src="/FC.png" alt={t("cardFront")} />
+        <Face src="/BC.png" alt={t("cardBack")} back />
       </motion.div>
     </div>
   );
@@ -85,10 +85,11 @@ function Face({
 }) {
   return (
     <div
-      className="absolute inset-0 overflow-hidden rounded-xl shadow-2xl ring-1 ring-black/10"
+      className="absolute inset-0 overflow-hidden"
       style={{
         backfaceVisibility: "hidden",
         transform: back ? "rotateY(180deg)" : undefined,
+        filter: "drop-shadow(0 20px 25px rgba(0, 0, 0, 0.15))",
       }}
     >
       <Image src={src} alt={alt} fill priority className="object-cover" sizes="100vw" />
