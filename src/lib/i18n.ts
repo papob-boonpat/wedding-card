@@ -28,6 +28,12 @@ export const dict = {
     errPartySize: "Please enter a number from 1 to 20",
     errSide: "Please let us know whose guest you are",
     errNetwork: "Something went wrong. Please try again.",
+    countTitle: "Counting down to our wedding day",
+    countDays: "days",
+    countHours: "hrs",
+    countMinutes: "min",
+    countSeconds: "sec",
+    weddingDay: "Today's the day! 🎉",
   },
   th: {
     tapToOpen: "แตะเพื่อเปิด",
@@ -55,6 +61,12 @@ export const dict = {
     errPartySize: "กรุณากรอกตัวเลขตั้งแต่ 1 ถึง 20",
     errSide: "กรุณาเลือกว่าคุณเป็นแขกของฝ่ายใด",
     errNetwork: "เกิดข้อผิดพลาด กรุณาลองอีกครั้ง",
+    countTitle: "นับถอยหลังสู่วันแต่งงานของเรา",
+    countDays: "วัน",
+    countHours: "ชม.",
+    countMinutes: "นาที",
+    countSeconds: "วินาที",
+    weddingDay: "วันนี้วันงานแล้ว! 🎉",
   },
 } satisfies Record<Lang, Record<string, string>>;
 

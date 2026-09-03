@@ -5,7 +5,7 @@ import { motion, useReducedMotion, type PanInfo } from "framer-motion";
 import { useI18n } from "./LangProvider";
 
 // Match this to the real aspect ratio of your card images (width / height).
-const CARD_ASPECT = 0.7142857143; // A-series portrait (e.g. 1414 x 2000)
+const CARD_ASPECT = 0.7182633318; // A-series portrait (e.g. 1414 x 2000)
 
 // Sized to leave room for the button bar below. Uses svh so mobile browser
 // chrome never clips it.
@@ -67,8 +67,8 @@ export default function Card({ flipped, onFlip, interactive }: Props) {
           }
         }}
       >
-        <Face src="/FC.png" alt={t("cardFront")} />
-        <Face src="/BC.png" alt={t("cardBack")} back />
+        <Face src="/FC2.png" alt={t("cardFront")} />
+        <Face src="/BC2.png" alt={t("cardBack")} back />
       </motion.div>
     </div>
   );

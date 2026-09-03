@@ -5,6 +5,8 @@ import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Envelope from "./Envelope";
 import Card from "./Card";
+import Countdown from "./Countdown";
+import Confetti from "./Confetti";
 import { useI18n } from "./LangProvider";
 
 type Phase = "sealed" | "opening" | "leaving" | "grow" | "card-out";
@@ -75,6 +77,8 @@ export default function InvitationScene() {
 
   return (
     <main className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden">
+      <Countdown show={grown} />
+      <Confetti fire={grown} />
       <div
         ref={stageRef}
         className="relative"
@@ -89,13 +93,15 @@ export default function InvitationScene() {
           className="absolute left-1/2 top-1/2"
           style={{
             x: "-50%",
-            y: "-50%",
             zIndex: 10,
             opacity: opened ? 1 : 0,
             pointerEvents: cardOut ? "auto" : "none",
           }}
           initial={false}
-          animate={{ scale: reduce || grown ? 1 : tuckScale }}
+          animate={{
+            scale: reduce || grown ? 1 : tuckScale,
+            y: reduce || grown ? "-55%" : "-50%",
+          }}
           transition={
             reduce
               ? { duration: 0 }
@@ -127,10 +133,10 @@ export default function InvitationScene() {
             <p className="text-xs uppercase tracking-[0.3em] text-accent drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)]">
               {t("tapOrSwipe")}
             </p>
-            <div className="flex flex-wrap justify-center gap-3">
+            <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
               <Link
                 href="/rsvp"
-                className="pointer-events-auto rounded-full bg-accent px-9 py-3.5 text-base font-medium tracking-wide text-white shadow-lg transition hover:brightness-110"
+                className="pointer-events-auto rounded-full bg-accent px-5 py-2.5 text-sm font-medium tracking-wide text-white shadow-lg transition hover:brightness-110 sm:px-9 sm:py-3.5 sm:text-base"
               >
                 {t("rsvp")}
               </Link>
@@ -138,7 +144,7 @@ export default function InvitationScene() {
                 href="https://maps.app.goo.gl/KVVUaA1X7Y77XMs86"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="pointer-events-auto rounded-full border border-accent bg-background px-9 py-3.5 text-base font-medium tracking-wide text-accent shadow-lg transition hover:brightness-95"
+                className="pointer-events-auto rounded-full border border-accent bg-background px-5 py-2.5 text-sm font-medium tracking-wide text-accent shadow-lg transition hover:brightness-95 sm:px-9 sm:py-3.5 sm:text-base"
               >
                 {t("location")}
               </a>
