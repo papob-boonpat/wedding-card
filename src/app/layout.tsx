@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Playfair_Display, Kanit } from "next/font/google";
+import { Inter, Coiny, Kanit, Playpen_Sans_Hebrew } from "next/font/google";
 import "./globals.css";
 import { LangProvider } from "@/components/LangProvider";
 import LangToggle from "@/components/LangToggle";
@@ -10,9 +10,11 @@ const inter = Inter({
   display: "swap",
 });
 
-const playfair = Playfair_Display({
+// English display font.
+const playPen = Playpen_Sans_Hebrew({
   subsets: ["latin"],
-  variable: "--font-playfair",
+  weight: "400",
+  variable: "--font-display",
   display: "swap",
 });
 
@@ -44,8 +46,8 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
-      lang="en"
-      className={`${inter.variable} ${playfair.variable} ${kanit.variable}`}
+      lang="th"
+      className={`${inter.variable} ${playPen.variable} ${kanit.variable}`}
     >
       <body className="antialiased">
         <LangProvider>

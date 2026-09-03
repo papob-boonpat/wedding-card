@@ -7,7 +7,7 @@ export const dict = {
     openEnvelope: "Open the invitation",
     tapOrSwipe: "Tap or swipe to turn the card",
     rsvp: "RSVP",
-    location: "📍 Location",
+    location: "📍 LOCATION",
     cardFront: "Front of the wedding invitation",
     cardBack: "Back of the wedding invitation",
     showFront: "Turn card to the front",
@@ -72,15 +72,4 @@ export const dict = {
 
 export type MessageKey = keyof (typeof dict)["en"];
 
-/** Pick a language from the client's device settings. Falls back to English. */
-export function detectLang(): Lang {
-  if (typeof navigator === "undefined") return "en";
-  const langs = navigator.languages?.length
-    ? navigator.languages
-    : [navigator.language];
-  for (const l of langs) {
-    if (l?.toLowerCase().startsWith("th")) return "th";
-    if (l?.toLowerCase().startsWith("en")) return "en";
-  }
-  return "en";
-}
+export const DEFAULT_LANG: Lang = "th";

@@ -7,7 +7,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { dict, detectLang, type Lang, type MessageKey } from "@/lib/i18n";
+import { dict, type Lang, type MessageKey } from "@/lib/i18n";
 
 type I18nContext = {
   lang: Lang;
@@ -20,17 +20,16 @@ const Ctx = createContext<I18nContext | null>(null);
 const STORAGE_KEY = "wedding-card-lang";
 
 export function LangProvider({ children }: { children: React.ReactNode }) {
-  // Always start on "en" so the server-rendered HTML and the first client
-  // render match (no hydration mismatch). Switch to the real language after
-  // mount.
-  const [lang, setLangState] = useState<Lang>("en");
+  // Default to Thai; only a saved choice overrides it (device language is
+  // ignored). Server HTML and first client render match on "th".
+  const [lang, setLangState] = useState<Lang>("th");
 
   useEffect(() => {
     const saved =
       typeof localStorage !== "undefined"
         ? (localStorage.getItem(STORAGE_KEY) as Lang | null)
         : null;
-    setLangState(saved === "th" || saved === "en" ? saved : detectLang());
+    if (saved === "th" || saved === "en") setLangState(saved);
   }, []);
 
   useEffect(() => {
