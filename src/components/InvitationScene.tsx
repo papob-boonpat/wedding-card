@@ -15,7 +15,7 @@ type Phase = "sealed" | "opening" | "leaving" | "grow" | "card-out";
 const FLAP_MS = 600; // 1. flap swings open (matches Envelope's flap duration)
 const HOLD_MS = 250; // 2. brief pause with the flap open
 const LEAVE_MS = 800; // 3. envelope slides down and fades away
-const GROW_MS = 650; // 4. the (now revealed) card grows to fill the screen
+const GROW_MS = 950; // 4. the (now revealed) card grows + rotates to the front
 
 // While tucked, the card is this fraction of the envelope's *height* so it
 // always fits inside, whatever the envelope's aspect ratio.
@@ -112,6 +112,7 @@ export default function InvitationScene() {
             flipped={flipped}
             onFlip={() => cardOut && setFlipped((f) => !f)}
             interactive={cardOut}
+            revealing={grown}
           />
         </motion.div>
 

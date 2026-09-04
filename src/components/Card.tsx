@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion, type PanInfo } from "framer-motion";
 import { useI18n } from "./LangProvider";
@@ -16,17 +17,30 @@ type Props = {
   onFlip: () => void;
   /** Only wire up tap / swipe / focus once the card is actually out. */
   interactive: boolean;
+  /** True from the moment the card starts growing out of the envelope. */
+  revealing: boolean;
 };
 
-export default function Card({ flipped, onFlip, interactive }: Props) {
+export default function Card({ flipped, onFlip, interactive, revealing }: Props) {
   const reduce = useReducedMotion();
   const { t } = useI18n();
+
+  // The card grows out back-first (rotateY 180) and rotates to the front as it
+  // scales up — so it's obvious it has two sides. After that, flips use a
+  // spring like normal.
+  const [revealed, setRevealed] = useState(false);
+  useEffect(() => {
+    if (reduce) setRevealed(true);
+  }, [reduce]);
 
   function handleDragEnd(_: unknown, info: PanInfo) {
     if (Math.abs(info.offset.x) > 60 || Math.abs(info.velocity.x) > 400) {
       onFlip();
     }
   }
+
+  const revealRotating = revealing && !revealed && !flipped;
+  const restY = flipped ? 180 : revealing ? 0 : 180;
 
   return (
     <div
@@ -44,12 +58,18 @@ export default function Card({ flipped, onFlip, interactive }: Props) {
           transformStyle: "preserve-3d",
           cursor: interactive ? "pointer" : "default",
         }}
-        animate={{ rotateY: flipped ? 180 : 0 }}
+        initial={{ rotateY: 180 }}
+        animate={{ rotateY: reduce ? (flipped ? 180 : 0) : restY }}
         transition={
           reduce
             ? { duration: 0 }
-            : { type: "spring", stiffness: 260, damping: 30 }
+            : revealRotating
+              ? { duration: 1.5, ease: [0.33, 1, 0.68, 1], delay: 0.15 }
+              : { type: "spring", stiffness: 260, damping: 30 }
         }
+        onAnimationComplete={() => {
+          if (revealRotating) setRevealed(true);
+        }}
         drag={interactive && !reduce ? "x" : false}
         dragConstraints={{ left: 0, right: 0 }}
         dragElastic={0.35}
